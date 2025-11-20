@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-config";
 
@@ -40,10 +40,7 @@ export async function GET(req: NextRequest) {
     });
   } catch (error) {
     console.error(error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error });
   }
 }
 
@@ -80,12 +77,19 @@ export async function POST(req: NextRequest) {
       data: result,
       success: true,
     });
-  } catch (error) {
-    console.error(error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+  } catch (err) {
+    if (err instanceof AxiosError) {
+      return NextResponse.json({
+        error: err.response?.data?.detail,
+        status: err.response?.status,
+        success: false,
+      });
+    }
+    return NextResponse.json({
+      error: "Something went wrong",
+      status: 500,
+      success: false,
+    });
   }
 }
 
@@ -131,10 +135,7 @@ export async function DELETE(req: NextRequest) {
     });
   } catch (error) {
     console.error(error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error });
   }
 }
 

@@ -47,7 +47,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen grid grid-cols-1 md:grid-cols-2">
       <div className="flex flex-col justify-center items-center p-8 relative">
-        <div className="absolute top-8 left-8">
+        <div className="absolute top-8 left-8 hidden sm:block">
           <svg
             width="32"
             height="32"
@@ -128,7 +128,7 @@ export default function LoginPage() {
               <div className="absolute inset-0 flex items-center pt-4">
                 <span className="w-full border-t" />
               </div>
-              <div className="relative flex justify-center text-xs uppercase pt-4">
+              <div className="relative flex justify-center text-xs uppercase">
                 <span className="bg-background px-2 text-muted-foreground">
                   Or continue with
                 </span>
@@ -155,7 +155,7 @@ export default function LoginPage() {
               Don&apos;t have an account?{" "}
               <Link
                 href="/auth/register"
-                className="font-medium text-primary hover:underline"
+                className="font-medium text-[#15803d] hover:underline"
               >
                 Register
               </Link>

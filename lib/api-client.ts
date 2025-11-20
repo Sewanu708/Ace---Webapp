@@ -57,14 +57,17 @@ class DrillEndPoints {
       config.body = typeof body === "string" ? body : JSON.stringify(body);
     try {
       const response = await fetch(cctURL, config);
+      console.log(response)
       if (!response.ok)
         throw new APIClientError(response.statusText, response.status);
       const data = await response.json();
+      console.log(data)
       if (!data.success) {
-        throw new APIClientError(data.error.message, data.error.status);
+        throw new APIClientError(data.error, data.status);
       }
       return data;
     } catch (error) {
+
       console.error(
         error instanceof APIClientError
           ? `${error.message} - ${error.status}`
@@ -73,7 +76,7 @@ class DrillEndPoints {
       if (error instanceof APIClientError) throw error;
 
       throw new APIClientError(
-        "A network or unexpected error occurred. Please try again.",
+        "An unexpected error occurred. Please try again.",
         500
       );
     }

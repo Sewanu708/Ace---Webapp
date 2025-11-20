@@ -35,7 +35,9 @@ export default function RegisterPage() {
         });
 
         if (result?.error) {
-          toast.error("Sign in after registration failed. Please log in manually.");
+          toast.error(
+            "Sign in after registration failed. Please log in manually."
+          );
           router.push("/auth/login");
         } else if (result?.ok) {
           router.push("/dashboard");
@@ -44,14 +46,16 @@ export default function RegisterPage() {
         throw new Error(response?.error || "Registration failed.");
       }
     } catch (error: any) {
-      toast.error(error.message || "An unexpected error occurred.");
+      toast.error(
+        error.message || error.details || "An unexpected error occurred."
+      );
     }
   };
 
   return (
     <div className="min-h-screen grid grid-cols-1 md:grid-cols-2">
-      <div className="flex flex-col justify-center items-center p-8 relative">
-        <div className="absolute top-8 left-8">
+      <div className="flex flex-col justify-center items-center p-8 sm:p-8 relative">
+        <div className="absolute sm:top-8 sm:left-8 hidden sm:block">
           <svg
             width="32"
             height="32"
@@ -113,7 +117,7 @@ export default function RegisterPage() {
                 )}
               </div>
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               <div className="grid gap-2 w-full">
                 <Label htmlFor="password" className="text-sm">
                   Password
@@ -124,11 +128,6 @@ export default function RegisterPage() {
                   {...register("password")}
                   className="border-[1.5px] px-2 py-1 rounded-md border-gray-500 focus:ring-1 text-base"
                 />
-                {errors.password && (
-                  <p className="text-red-500 text-xs mt-1">
-                    {errors.password.message}
-                  </p>
-                )}
               </div>
               <div className="grid gap-2 w-full">
                 <Label htmlFor="confirmPassword" className="text-sm">
@@ -140,17 +139,22 @@ export default function RegisterPage() {
                   {...register("confirmPassword")}
                   className="border-[1.5px] px-2 py-1 rounded-md border-gray-500 focus:ring-1 text-base"
                 />
-                {errors.confirmPassword && (
-                  <p className="text-red-500 text-xs mt-1">
-                    {errors.confirmPassword.message}
-                  </p>
-                )}
               </div>
             </div>
+            {errors.password && (
+              <p className="text-red-500 text-xs mt-1">
+                {errors.password.message}
+              </p>
+            )}
+            {errors.confirmPassword && (
+              <p className="text-red-500 text-xs mt-1">
+                {errors.confirmPassword.message}
+              </p>
+            )}
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="w-full h-12 bg-[#15803d] text-base disabled:opacity-50"
+              className="w-full h-12 bg-[#022c22] text-white disabled:opacity-50"
             >
               {isSubmitting ? "Creating Account..." : "Create Account"}
             </Button>
@@ -186,7 +190,7 @@ export default function RegisterPage() {
               Already have an account?{" "}
               <Link
                 href="/auth/login"
-                className="font-medium text-primary hover:underline"
+                className="font-medium text-[#15803d] hover:underline"
               >
                 Sign In
               </Link>

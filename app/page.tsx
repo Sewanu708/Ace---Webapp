@@ -12,25 +12,28 @@ import { Button } from "@/components/ui/button";
 
 export default function Page() {
   return (
-    <section className=" min-h-screen flex flex-col justify-center px-4 items-center overflow-hidden bg-white">
+    <section className="min-h-screen flex flex-col bg-white">
       <Navbar />
-      {/* 1. The Texture Background */}
-      <div className="relative w-full flex-1 mt-16 items-center flex justify-center">
+      {/* Main content area */}
+      <div className="relative flex flex-1 flex-col items-center justify-center px-4 text-center">
+        {/* Texture Background */}
         <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)]  [background-size:8px_8px] pointer-events-none rounded-2xl bg-gray-50" />
 
-        <div className="text-center pt-32 z-50">
-          <h1 className="text-6xl md:text-7xl  text-gray-900 ">
+        {/* Hero Text Content */}
+        <div className="z-10 max-w-4xl">
+          <h1 className="text-5xl tracking-tight text-gray-900 sm:text-6xl md:text-7xl">
             Think, plan, and track
           </h1>
-          <h2 className="text-6xl md:text-7xl  text-gray-400 mb-2">
+          <h2 className="text-5xl  tracking-tight text-gray-400 sm:text-6xl md:text-7xl">
             all in one place
           </h2>
-
-          <p className="text-sm text-gray-600 mb-4">
+          <p className="mt-6 text-lg leading-8 text-gray-600">
             Efficiently manage your tasks and boost productivity.
           </p>
-          <Link href={'/auth/register'}>
-            <Button className="bg-[#022c22]  text-white ">Get Started</Button>
+          <Link href={"/auth/register"} className="mt-8 inline-block">
+            <Button className="bg-[#022c22] text-white h-12 px-8 text-base">
+              Get Started
+            </Button>
           </Link>
         </div>
       </div>
