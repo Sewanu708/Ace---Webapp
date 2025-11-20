@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import {
   Timer,
@@ -17,21 +18,20 @@ export default function Page() {
       <div className="relative w-full flex-1 mt-16 items-center flex justify-center">
         <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)]  [background-size:8px_8px] pointer-events-none rounded-2xl bg-gray-50" />
 
-          <div className="text-center pt-32 z-50">
+        <div className="text-center pt-32 z-50">
           <h1 className="text-6xl md:text-7xl  text-gray-900 ">
             Think, plan, and track
           </h1>
           <h2 className="text-6xl md:text-7xl  text-gray-400 mb-2">
             all in one place
           </h2>
-          
+
           <p className="text-sm text-gray-600 mb-4">
             Efficiently manage your tasks and boost productivity.
           </p>
-          
-          <Button className="bg-[#022c22]  text-white ">
-            Get Started
-          </Button>
+          <Link href={'/auth/register'}>
+            <Button className="bg-[#022c22]  text-white ">Get Started</Button>
+          </Link>
         </div>
       </div>
     </section>
@@ -67,9 +67,7 @@ export const Navbar = () => {
               <polygon points="50,10 90,90 10,90" fill="url(#gradient)" />
             </svg>
           </div>
-          <span className="text-xl font-semibold tracking-tight">
-            Ace
-          </span>
+          <span className="text-xl font-semibold tracking-tight">Ace</span>
         </Link>
 
         {/* 2. Navigation Links (Hidden on mobile) */}
@@ -88,7 +86,7 @@ export const Navbar = () => {
           </Link>
           <Link
             href="#pricing"
-            className="text-sm font-medium text-slate-800 hover:text-slate-600transition-colors"
+            className="text-sm font-medium text-slate-800 hover:text-slate-600 transition-colors"
           >
             Pricing
           </Link>
@@ -98,13 +96,13 @@ export const Navbar = () => {
         <div className="flex items-center gap-4">
           <Link
             href="/auth/login"
-            className="text-sm font-medium text-slate-800 hover:text-white transition-colors hidden sm:block"
+            className="text-sm font-medium text-slate-800 hover:text-slate-700 transition-colors hidden sm:block"
           >
             Sign In
           </Link>
           <Link
             href="/auth/register"
-            className="text-sm font-medium bg-slate-900 border border-slate-700 hover:border-indigo-500 hover:text-indigo-400 text-slate-200 px-4 py-2 rounded-lg transition-all flex items-center gap-2"
+            className="text-sm font-medium bg-slate-900 border border-slate-700 hover:border-slate-800 hover:text-slate-200 text-slate-200 px-4 py-2 rounded-lg transition-all flex items-center gap-2"
           >
             Get Started <ArrowRight className="w-4 h-4" />
           </Link>

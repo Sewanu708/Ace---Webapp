@@ -1,10 +1,49 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import Image from "next/image";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { LoginSchema, loginSchema } from "@/lib/schema";
+import { toast } from "sonner";
 
 export default function LoginPage() {
+  const router = useRouter();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginSchema>({
+    resolver: zodResolver(loginSchema),
+  });
+
+  const onSubmit = async (data: LoginSchema) => {
+    try {
+      const result = await signIn("credentials", {
+        redirect: false,
+        callbackUrl: "/dashboard",
+        email: data.email,
+        password: data.password,
+      });
+
+      if (result?.error) {
+        throw new Error("Login failed, email or password is incorrect.");
+      } else if (result?.ok) {
+        router.push("/dashboard");
+      }
+    } catch (error) {
+      console.log('lololo')
+      toast.error("Invalid email or password. Please try again.");
+    }
+  };
+
   return (
     <div className="min-h-screen grid grid-cols-1 md:grid-cols-2">
       <div className="flex flex-col justify-center items-center p-8 relative">
@@ -31,47 +70,65 @@ export default function LoginPage() {
               Enter your credentials to access your account
             </p>
           </div>
-          <div className="grid gap-4">
-            <div className="grid gap-2">
-              <Label htmlFor="email" className=" text-sm">
-                Email
-              </Label>
-              <input
-                id="email"
-                type="email"
-                placeholder="m@example.com"
-                className="border-[1.5px] px-2 py-1 rounded-md border-gray-500 focus:ring-1 text-base"
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="password" className="text-sm">
-                Password
-              </Label>
-              <input
-                id="password"
-                type="password"
-                className="border-[1.5px] px-2 py-1 rounded-md border-gray-500 focus:ring-1 text-base"
-              />
-            </div>
-          </div>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <Checkbox id="remember-me" />
-              <Label htmlFor="remember-me">Remember me</Label>
-            </div>
-            <Link href="#" className="text-sm text-[#15803d] font-medium ">
-              Forgot password?
-            </Link>
-          </div>
-          <div className="flex flex-col gap-4">
-            <Button className="w-full h-12 bg-[#15803d] text-base">
-              Sign In
-            </Button>
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t border-[1px] rounded-md border-gray-400" />
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <div className="grid gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="email" className=" text-sm">
+                  Email
+                </Label>
+                <input
+                  id="email"
+                  type="email"
+                  placeholder="m@example.com"
+                  {...register("email")}
+                  className="border-[1.5px] px-2 py-1 rounded-md border-gray-500 focus:ring-1 text-base"
+                />
+                {errors.email && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.email.message}
+                  </p>
+                )}
               </div>
-              <div className="relative flex justify-center text-xs uppercase">
+              <div className="grid gap-2">
+                <Label htmlFor="password" className="text-sm">
+                  Password
+                </Label>
+                <input
+                  id="password"
+                  type="password"
+                  {...register("password")}
+                  className="border-[1.5px] px-2 py-1 rounded-md border-gray-500 focus:ring-1 text-base"
+                />
+                {errors.password && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.password.message}
+                  </p>
+                )}
+              </div>
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <Checkbox id="remember-me" />
+                <Label htmlFor="remember-me">Remember me</Label>
+              </div>
+              <Link href="#" className="text-sm text-[#15803d] font-medium ">
+                Forgot password?
+              </Link>
+            </div>
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full h-12 bg-[#022c22] text-white"
+            >
+              {isSubmitting ? "Signing In..." : "Sign In"}
+            </Button>
+          </form>
+          <div className="flex flex-col gap-4">
+            <div className="relative pt-4">
+              <div className="absolute inset-0 flex items-center pt-4">
+                <span className="w-full border-t" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase pt-4">
                 <span className="bg-background px-2 text-muted-foreground">
                   Or continue with
                 </span>
@@ -110,8 +167,8 @@ export default function LoginPage() {
         <Image
           src="/Image_fx.png"
           alt="Learn"
-          layout="fill"
-          objectFit="cover"
+          fill
+          style={{ objectFit: "cover" }}
         />
       </div>
     </div>

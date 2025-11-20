@@ -1,5 +1,6 @@
 import { Navbar } from "@/components/layout/Navbar";
 import { Sidebar } from "@/components/layout/Sidebar";
+import { Toaster } from "sonner";
 
 export default function DashboardLayout({
   children,
@@ -12,6 +13,7 @@ export default function DashboardLayout({
       <div className="flex flex-col pl-64">
         <Navbar />
         <main className="flex-grow p-6">{children}</main>
+        
       </div>
     </div>
   );

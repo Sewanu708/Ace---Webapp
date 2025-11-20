@@ -1,9 +1,53 @@
+"use client";
+
 import Link from "next/link";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { RegisterSchema, schema } from "@/lib/schema";
+import { apiClient } from "@/lib/api-client";
+import { signIn } from "next-auth/react";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export default function RegisterPage() {
+  const router = useRouter();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<RegisterSchema>({
+    resolver: zodResolver(schema),
+  });
+
+  const onSubmit = async (data: RegisterSchema) => {
+    try {
+      const response = await apiClient.register(data);
+      if (response?.success) {
+        toast.success("Registration successful! Signing you in...");
+        const result = await signIn("credentials", {
+          redirect: false,
+          email: data.email,
+          password: data.password,
+        });
+
+        if (result?.error) {
+          toast.error("Sign in after registration failed. Please log in manually.");
+          router.push("/auth/login");
+        } else if (result?.ok) {
+          router.push("/dashboard");
+        }
+      } else {
+        throw new Error(response?.error || "Registration failed.");
+      }
+    } catch (error: any) {
+      toast.error(error.message || "An unexpected error occurred.");
+    }
+  };
+
   return (
     <div className="min-h-screen grid grid-cols-1 md:grid-cols-2">
       <div className="flex flex-col justify-center items-center p-8 relative">
@@ -30,28 +74,44 @@ export default function RegisterPage() {
               Enter your details to create a new account
             </p>
           </div>
-          <div className="grid gap-4">
-            <div className="grid gap-2">
-              <Label htmlFor="fullName" className=" text-sm">
-                Full Name
-              </Label>
-              <input
-                id="fullName"
-                type="text"
-                placeholder="John Doe"
-                className="border-[1.5px] px-2 py-1 rounded-md border-gray-500 focus:ring-1 text-base"
-              />
+          <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
+            <div>
+              <div className="grid gap-2">
+                <Label htmlFor="name" className=" text-sm">
+                  Full Name
+                </Label>
+                <input
+                  id="name"
+                  type="text"
+                  placeholder="John Doe"
+                  {...register("name")}
+                  className="border-[1.5px] px-2 py-1 rounded-md border-gray-500 focus:ring-1 text-base"
+                />
+                {errors.name && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.name.message}
+                  </p>
+                )}
+              </div>
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="email" className=" text-sm">
-                Email
-              </Label>
-              <input
-                id="email"
-                type="email"
-                placeholder="m@example.com"
-                className="border-[1.5px] px-2 py-1 rounded-md border-gray-500 focus:ring-1 text-base"
-              />
+            <div>
+              <div className="grid gap-2">
+                <Label htmlFor="email" className=" text-sm">
+                  Email
+                </Label>
+                <input
+                  id="email"
+                  type="email"
+                  placeholder="m@example.com"
+                  {...register("email")}
+                  className="border-[1.5px] px-2 py-1 rounded-md border-gray-500 focus:ring-1 text-base"
+                />
+                {errors.email && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.email.message}
+                  </p>
+                )}
+              </div>
             </div>
             <div className="flex gap-2">
               <div className="grid gap-2 w-full">
@@ -61,25 +121,41 @@ export default function RegisterPage() {
                 <input
                   id="password"
                   type="password"
+                  {...register("password")}
                   className="border-[1.5px] px-2 py-1 rounded-md border-gray-500 focus:ring-1 text-base"
                 />
+                {errors.password && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.password.message}
+                  </p>
+                )}
               </div>
-              <div className="grid gap-2">
-                <Label htmlFor="password" className="text-sm">
+              <div className="grid gap-2 w-full">
+                <Label htmlFor="confirmPassword" className="text-sm">
                   Confirm Password
                 </Label>
                 <input
-                  id="confirm-password"
+                  id="confirmPassword"
                   type="password"
+                  {...register("confirmPassword")}
                   className="border-[1.5px] px-2 py-1 rounded-md border-gray-500 focus:ring-1 text-base"
                 />
+                {errors.confirmPassword && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.confirmPassword.message}
+                  </p>
+                )}
               </div>
             </div>
-          </div>
-          <div className="flex flex-col gap-4">
-            <Button className="w-full h-12 bg-[#15803d] text-base">
-              Create Account
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full h-12 bg-[#15803d] text-base disabled:opacity-50"
+            >
+              {isSubmitting ? "Creating Account..." : "Create Account"}
             </Button>
+          </form>
+          <div className="flex flex-col gap-4">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
                 <span className="w-full border-t" />
@@ -119,7 +195,12 @@ export default function RegisterPage() {
         </div>
       </div>
       <div className="relative hidden md:block">
-        <Image src="/drill.png" alt="Drill" layout="fill" objectFit="cover" />
+        <Image
+          src="/drill.png"
+          alt="Drill"
+          fill
+          style={{ objectFit: "cover" }}
+        />
       </div>
     </div>
   );
